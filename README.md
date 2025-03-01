@@ -1,7 +1,3 @@
-python3 -m venv 366venv
-source 366venv/bin/activate
-pip install -r requirements.txt
-
 # 21366 Ranking Algorithm
 
 ## Description
