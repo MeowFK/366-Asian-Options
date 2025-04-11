@@ -1,7 +1,7 @@
-# 21366 Ranking Algorithm
+# 21366 Pricing Asian Options
 
 ## Description
-This project implements the **21366 Ranking Algorithm**.
+This project defines, implements, and compares several ways to price asian (chooser) options.
 
 ## How to Run Project
 
