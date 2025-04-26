@@ -1,2 +1,8 @@
-numpy
+numpy>=1.17.3
+scipy>=1.3.2
+pandas>=0.19
 matplotlib
+openpyxl
+statsmodels>=0.11
+xlrd>=2.0.1
+pmdarima
