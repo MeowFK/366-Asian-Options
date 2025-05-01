@@ -2,10 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tqdm
 
-np.random.seed(101)
+# np.random.seed(101)
 
 S0 = 100
-vol = 1.0
+vol = 0.8
 T = 1000
 intervals = 10000
 strike = 110
@@ -20,20 +20,20 @@ plt.plot(x, y, label="Stock Price")
 
 rolling_sum = np.cumsum(y)
 rolling_avg = rolling_sum / np.arange(1, len(y)+1)
-plt.plot(x, rolling_avg, label="Asian Payout")
-plt.title("Asian Option Payout over Time 1000")
+# plt.plot(x, rolling_avg, label="Asian Payout")
+plt.title(f"Bachelier vol:{vol}")
 plt.legend()
-plt.savefig('../figs/bachelier-asian-T:1000')
+plt.savefig(f'../figs/bachelier-vol:{vol}-T:1000.png')
 plt.close()
 
-put = np.maximum(strike - rolling_avg, 0)
-call = np.maximum(rolling_avg - strike, 0)
-chooser = np.maximum(put, call)
+# put = np.maximum(strike - rolling_avg, 0)
+# call = np.maximum(rolling_avg - strike, 0)
+# chooser = np.maximum(put, call)
 
-plt.plot(x, put, label="Put payout")
-plt.plot(x, call, label="Call payout")
-plt.plot(x, chooser, label="Chooser payout", alpha=0.5)
+# plt.plot(x, put, label="Put payout")
+# plt.plot(x, call, label="Call payout")
+# plt.plot(x, chooser, label="Chooser payout", alpha=0.5)
 
-plt.title("Asian Chooser Payout over Time 1000")
-plt.legend()
-plt.savefig('../figs/bachelier-asian-chooser-T:1000')
+# plt.title("Asian Chooser Payout over Time 1000")
+# plt.legend()
+# plt.savefig('../figs/bachelier-asian-chooser-T:1000')
