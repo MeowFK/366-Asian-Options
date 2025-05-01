@@ -1,10 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-stock_init = 100
-volatility = 0.015
+S0 = 100
+sigma = 0.015
 r = 0.06
-
+mu = r
+K = 70
+T = 1000
+stock_init = 100
 runs = 10
 scale = 252
 
@@ -20,7 +23,7 @@ put_list, call_list, chooser_list = [0] * runs, [0] * runs, [0] * runs
 for j in range(runs):
     for i in range(1000):
         dW_t = np.random.normal(loc=0, scale=np.sqrt(d_t))
-        dS_t = mu * s_t * d_t + volatility * s_t * dW_t
+        dS_t = mu * s_t * d_t + sigma * s_t * dW_t
         s_t += dS_t
         A[i] = s_t
 
