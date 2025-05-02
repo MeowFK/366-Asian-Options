@@ -2,38 +2,40 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tqdm
 
-np.random.seed(101)
+np.random.seed(21366)
 
 S0 = 100
-vol = 1.0
-T = 1000
+vol = 30.0
+T = 180 / 365
 intervals = 10000
-strike = 110
+d_t = T/intervals
+strike = 100
 
 x = np.linspace(0, T, intervals+1)
+x2 = np.linspace(0, T, intervals)
 y = [S0]
+avgs = [strike]
 for i in tqdm.trange(0, x.size-1):
-  dSt = vol * ( np.sqrt( T / intervals ) * np.random.standard_normal() )
+  dSt = vol * ( np.sqrt(d_t) * np.random.standard_normal() )
   y.append(y[-1] + dSt)
+  avgs.append(np.sum(y[0:i])/i)
+  
+puts = [max(0,strike - avgs[i]) for i in tqdm.trange(0, x.size - 1)]
+calls = [max(0,avgs[i] - strike) for i in tqdm.trange(0, x.size - 1)]
 
 plt.plot(x, y, label="Stock Price")
-
-rolling_sum = np.cumsum(y)
-rolling_avg = rolling_sum / np.arange(1, len(y)+1)
-plt.plot(x, rolling_avg, label="Asian Payout")
-plt.title("Asian Option Payout over Time 1000")
+plt.plot(x, avgs, label="Average Price")
+plt.xlabel("Time (in years)")
+plt.ylabel("Value (in dollars)")
+plt.title("Stock value and its average over 6 months using Bachelier Model")
 plt.legend()
-plt.savefig('../figs/bachelier-asian-T:1000')
+plt.savefig('../figs/bachelier-stock-T:180')
 plt.close()
 
-put = np.maximum(strike - rolling_avg, 0)
-call = np.maximum(rolling_avg - strike, 0)
-chooser = np.maximum(put, call)
-
-plt.plot(x, put, label="Put payout")
-plt.plot(x, call, label="Call payout")
-plt.plot(x, chooser, label="Chooser payout", alpha=0.5)
-
-plt.title("Asian Chooser Payout over Time 1000")
+plt.plot(x2, puts, label="Put Option Value")
+plt.plot(x2, calls, label="Call Option Value")
+plt.xlabel("Time (in years)")
+plt.ylabel("Value (in dollars)")
+plt.title("Asian option value over 6 months using Bachelier Model")
 plt.legend()
-plt.savefig('../figs/bachelier-asian-chooser-T:1000')
+plt.savefig('../figs/bachelier-option-payout-T:180')

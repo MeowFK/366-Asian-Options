@@ -2,42 +2,40 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tqdm
 
+# No seed so that each call to np.random is actually random
+
 S0 = 100
-sigma = 0.3
-r = 0.06
-mu = 0.1
-K = 70
-T = 1000
+sigma = 0.1
+sigma_abs = sigma * S0
+r = 0.005
+mu = r
+K = 100
+num_days = 180
+T = num_days / 365
 intervals = 10000
+num_trials = 1000
 
-x1 = np.linspace(0, T, intervals+1)
-A1 = np.zeros(intervals)
-s_t = S0
-d1_t = 1/365
+x = np.linspace(0, T, intervals+1)
+d_t = T/intervals
 
-x2 = np.linspace(0, T, intervals+1)
-y = [S0]  
+# Discount Factor
+dT = np.exp(-r * T)
 
+put_list1, call_list1, chooser_list1 = [0] * num_trials, [0] * num_trials, [0] * num_trials
+put_list2, call_list2, chooser_list2 = [0] * num_trials, [0] * num_trials, [0] * num_trials
 
-
-put_list1, call_list1, chooser_list1 = [0] * 3000, [0] * 3000, [0] * 3000
-put_list2, call_list2, chooser_list2 = [0] * 3000, [0] * 3000, [0] * 3000
-
-
-for j in range(1000):
-    for i in tqdm.trange(0, x1.size - 1):
+for j in range(num_trials):
+    y = [S0]
+    A1 = [S0]
+    for i in tqdm.trange(0, x.size - 1):
         # Black-Scholes Model
-        dW_t = np.random.normal(loc=0, scale=(i/365))
-        dS_t = mu * d1_t + sigma * dW_t * np.sqrt(d1_t)
-        s_t += s_t * dS_t
-        A1[i] = s_t
+        dW_t = np.random.standard_normal() * np.sqrt(d_t)
+        dS_t = A1[-1] * mu * d_t + A1[-1] * sigma * dW_t
+        A1.append(A1[-1] + dS_t)
         
         # Bachelier Model
-        dSt = sigma * ( np.sqrt( T / intervals ) * np.random.standard_normal() )
+        dSt = sigma_abs * (np.sqrt(d_t) * np.random.standard_normal())
         y.append(y[-1] + dSt)
-
-    # Discount Factor
-    dT = np.exp(-r * (T/365))
     
     # Black-Scholes Model
     avg1 = np.sum(A1) / len(A1)
@@ -47,10 +45,9 @@ for j in range(1000):
     put_list1[j] = put * dT
     call_list1[j] = call * dT
     chooser_list1[j] = chooser * dT
-    s_t = S0
     
     # Bachelier Model
-    avg2 = y[len(y)-1] / len(y)
+    avg2 = np.sum(y) / len(y)
     put = np.maximum(K - avg2, 0)
     call = np.maximum(avg2 - K, 0)
     chooser = np.maximum(put, call)
